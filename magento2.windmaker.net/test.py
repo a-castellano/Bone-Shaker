@@ -45,7 +45,7 @@ class Example(unittest.TestCase):
         menu_bar_women_button=self.driver.find_element_by_id("ui-id-4")
         ActionChains(self.driver).move_to_element(menu_bar_women_button).perform()
         menu_bar_women_button.click()
-        print("click")
+
         products_grid_grid=WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "info")))
 
         cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
@@ -65,6 +65,21 @@ class Example(unittest.TestCase):
             picture = self.img_folder + cdt + '.png'
             self.driver.save_screenshot(picture)
 
+        items_to_shop[0].click() #product-addtocart-button
+
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "product_addtocart_form")))
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "product-options-bottom")))
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        # Choose size and color
 
     def tearDown(self):
 
