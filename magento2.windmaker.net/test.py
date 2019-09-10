@@ -80,6 +80,60 @@ class Example(unittest.TestCase):
         self.driver.save_screenshot(picture)
 
         # Choose size and color
+        self.driver.find_element_by_id("option-label-size-141-item-172").click()
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        self.driver.find_element_by_id("option-label-color-93-item-50").click()
+
+        time.sleep(1)
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        time.sleep(1)
+
+        self.driver.find_element_by_id("product-addtocart-button").click()
+
+        WebDriverWait(self.driver, 10).until(
+        EC.text_to_be_present_in_element((By.CLASS_NAME, "messages"), "You added Deirdre Relaxed-Fit Capri to your shopping cart."))
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "counter-number")))
+
+        self.driver.find_element_by_class_name("counter-number").click()
+
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "top-cart-btn-checkout")))
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        self.driver.find_element_by_id("top-cart-btn-checkout").click()
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "checkout-shipping-address")))
+
+        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "shipping-method-buttons-container")))
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
 
     def tearDown(self):
 
