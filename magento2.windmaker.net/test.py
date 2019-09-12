@@ -16,6 +16,8 @@ class Example(unittest.TestCase):
 
         current_location = os.getcwd()
         self.img_folder = current_location + '/images/'
+        self.dt_format = '%Y%m%d_%H%M%S'
+        self.photo_id=0;
 
         if not os.path.exists(self.img_folder):
             os.mkdir(self.img_folder)
@@ -43,17 +45,20 @@ class Example(unittest.TestCase):
         self.driver =webdriver.Chrome( chrome_options=options)
         self.driver.get('https://magento2.windmaker.net/')
 
+        self.driver.set_window_size(1920, 1080)
 
+    def take_snapshot(self):
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(self.dt_format)
+        picture = "{}{:02d}_{}.png".format(self.img_folder,self.photo_id, cdt)
+        self.driver.save_screenshot(picture)
+
+        self.photo_id += 1
 
     def test_something(self):
 
-        dt_format = '%Y%m%d_%H%M%S'
 
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "ui-id-4")))
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
 
         menu_bar_women_button=self.driver.find_element_by_id("ui-id-4")
         ActionChains(self.driver).move_to_element(menu_bar_women_button).perform()
@@ -61,63 +66,41 @@ class Example(unittest.TestCase):
 
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "info")))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
-
-        time.sleep(3)
+        self.take_snapshot()
 
         items_to_shop = self.driver.find_elements_by_class_name('product-item-info')
+
         for ii in items_to_shop:
+
             self.driver.execute_script("arguments[0].scrollIntoView();", ii)
             ActionChains(self.driver).move_to_element(ii).perform()
-
-            cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-
-            picture = self.img_folder + cdt + '.png'
-            self.driver.save_screenshot(picture)
+            self.take_snapshot()
 
         items_to_shop[0].click() #product-addtocart-button
 
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "product_addtocart_form")))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "product-options-bottom")))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
         # Choose size and color
         self.driver.find_element_by_id("option-label-size-141-item-172").click()
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
         self.driver.find_element_by_id("option-label-color-93-item-50").click()
 
-        #time.sleep(1)
-
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
-
-        #time.sleep(1)
+        self.take_snapshot()
 
         self.driver.find_element_by_id("product-addtocart-button").click()
-        #self.driver.get('https://magento2.windmaker.net/checkout/#shipping')
 
         WebDriverWait(self.driver, 10).until(
         EC.text_to_be_present_in_element((By.CLASS_NAME, "messages"), "You added Deirdre Relaxed-Fit Capri to your shopping cart."))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "counter-number")))
 
@@ -125,46 +108,35 @@ class Example(unittest.TestCase):
 
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "top-cart-btn-checkout")))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
         self.driver.find_element_by_id("top-cart-btn-checkout").click()
 
         self.driver.find_element_by_id("checkout-loader").click()
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
-        #actions = ActionChains(self.driver)
-        #actions.move_by_offset(1, 1).perform()
-        #actions.move_by_offset(2, 2).perform()
-
-        self.driver.execute_script("window.focus();")
-        #self.driver.execute_script("window.getAttention();")
-
-        #cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        #picture = self.img_folder + cdt + '.png'
-        #self.driver.save_screenshot(picture)
-
-        WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "customer-email")))
         WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
+        email = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "customer-email")))
+        firstname = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.NAME, "firstname")))
+        lastname = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.NAME, "lastname")))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
 
-        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "shipping-method-buttons-container")))
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(self.dt_format)
 
-        #time.sleep(6)
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        email.send_keys("user_{}@test.com".format(cdt))
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
+        self.take_snapshot()
+
+        firstname.send_keys("jhon_{}".format(cdt))
+
+        self.take_snapshot()
+
+        lastname.send_keys("Doe")
+
+        self.take_snapshot()
+
 
     def tearDown(self):
 
