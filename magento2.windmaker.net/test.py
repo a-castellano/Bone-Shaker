@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 class Example(unittest.TestCase):
 
@@ -19,17 +20,29 @@ class Example(unittest.TestCase):
         if not os.path.exists(self.img_folder):
             os.mkdir(self.img_folder)
 
+#        self.driver = webdriver.Remote(
+#            command_executor='http://localhost:4444/wd/hub',
+#            desired_capabilities = {
+#                'browserName': 'chrome',
+#                'cssSelectorsEnabled': True,
+#                'javascriptEnabled': True,
+#                'databaseEnabled': True,
+#                'locationContextEnabled': True,
+#                'applicationCacheEnabled': True,
+#                'browserConnectionEnabled': True,
+#                'webStorageEnabled': True,
+#                }
+#        )
 
-        self.driver = webdriver.Remote(
-            command_executor='http://localhost:4444/wd/hub',
-            desired_capabilities={
-                'browserName': 'chrome',
-                'javascriptEnabled': True
-            }
-        )
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
 
-        self.driver.set_window_size(1920, 1080)
+        #self.driver.set_window_size(1920, 1080)
+        #self.driver.get('https://magento2.windmaker.net/')
+
+        self.driver =webdriver.Chrome( chrome_options=options)
         self.driver.get('https://magento2.windmaker.net/')
+
 
 
     def test_something(self):
@@ -46,7 +59,7 @@ class Example(unittest.TestCase):
         ActionChains(self.driver).move_to_element(menu_bar_women_button).perform()
         menu_bar_women_button.click()
 
-        products_grid_grid=WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "info")))
+        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "info")))
 
         cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
 
@@ -88,15 +101,16 @@ class Example(unittest.TestCase):
 
         self.driver.find_element_by_id("option-label-color-93-item-50").click()
 
-        time.sleep(1)
+        #time.sleep(1)
 
         cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
         picture = self.img_folder + cdt + '.png'
         self.driver.save_screenshot(picture)
 
-        time.sleep(1)
+        #time.sleep(1)
 
         self.driver.find_element_by_id("product-addtocart-button").click()
+        #self.driver.get('https://magento2.windmaker.net/checkout/#shipping')
 
         WebDriverWait(self.driver, 10).until(
         EC.text_to_be_present_in_element((By.CLASS_NAME, "messages"), "You added Deirdre Relaxed-Fit Capri to your shopping cart."))
@@ -117,23 +131,40 @@ class Example(unittest.TestCase):
 
         self.driver.find_element_by_id("top-cart-btn-checkout").click()
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
-
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "checkout-shipping-address")))
-
-        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
-        picture = self.img_folder + cdt + '.png'
-        self.driver.save_screenshot(picture)
-
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "shipping-method-buttons-container")))
+        self.driver.find_element_by_id("checkout-loader").click()
 
         cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
         picture = self.img_folder + cdt + '.png'
         self.driver.save_screenshot(picture)
 
+        #actions = ActionChains(self.driver)
+        #actions.move_by_offset(1, 1).perform()
+        #actions.move_by_offset(2, 2).perform()
+
+        self.driver.execute_script("window.focus();")
+        #self.driver.execute_script("window.getAttention();")
+
+        #cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        #picture = self.img_folder + cdt + '.png'
+        #self.driver.save_screenshot(picture)
+
+        WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "customer-email")))
+        WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        #WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "shipping-method-buttons-container")))
+
+        #time.sleep(6)
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
+
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(dt_format)
+        picture = self.img_folder + cdt + '.png'
+        self.driver.save_screenshot(picture)
 
     def tearDown(self):
 
