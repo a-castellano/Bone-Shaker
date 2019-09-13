@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.support.ui import Select
 
 class Example(unittest.TestCase):
 
@@ -116,14 +117,30 @@ class Example(unittest.TestCase):
 
         self.take_snapshot()
 
-        WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
-        email = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "customer-email")))
-        firstname = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.NAME, "firstname")))
-        lastname = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.NAME, "lastname")))
+        WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
+        email = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.ID, "customer-email")))
+        firstname = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "firstname")))
+        lastname = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "lastname")))
+        street = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "street[0]")))
+        city = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "city")))
+        country = Select(WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "country_id"))))
+        province = Select(WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "region_id"))))
+        telephone = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "telephone")))
+        postcode = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "postcode")))
+        shipping = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.NAME, "ko_unique_2")))#Fails
+
+        shipping_buttons = self.driver.find_elements_by_xpath("//button")
+        nextStepButton = None
+
+        for button in shipping_buttons:
+
+            if button.text == "Next":
+
+                nextStepButton = button
 
         self.take_snapshot()
 
-        cdt = datetime.datetime.fromtimestamp(time.time()).strftime(self.dt_format)
+        cdt = datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d%H%M%S")
 
         email.send_keys("user_{}@test.com".format(cdt))
 
@@ -137,6 +154,53 @@ class Example(unittest.TestCase):
 
         self.take_snapshot()
 
+        street.send_keys("Wrong street {}".format(cdt))
+
+        self.take_snapshot()
+
+        city.send_keys("Bone City")
+
+        self.take_snapshot()
+
+        country.select_by_value('ES')
+
+        self.take_snapshot()
+
+        province.select_by_value("130")
+
+        self.take_snapshot()
+
+        telephone.send_keys("666666666")
+
+        self.take_snapshot()
+
+        postcode.send_keys("15001")
+
+        self.take_snapshot()
+
+        shipping.click()
+
+        self.take_snapshot()
+
+        #action = ActionChains(self.driver)
+        #action.move_to_element(nextStepButton)
+        #action.click()
+        #action.perform()
+
+        nextStepButton.click()
+
+        self.take_snapshot()
+        self.driver.execute_script("window.scrollTo(0, 0)")
+        #time.sleep(5)
+        self.take_snapshot()
+        checkout = WebDriverWait(self.driver, 70).until(EC.visibility_of_element_located((By.XPATH, "//button[@type='submit']")))
+        checkout.click()
+
+        self.take_snapshot()
+
+        EC.text_to_be_present_in_element((By.CLASS_NAME, "base"), "Thank you for your purchase!")
+
+        self.take_snapshot()
 
     def tearDown(self):
 
