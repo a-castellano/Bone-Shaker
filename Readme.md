@@ -29,7 +29,7 @@ cd Examples/  && python3 softwaretester_example.py
 Run test script
 
 ```
-cd magento2.windmaker.net && python3 softwaretester_example.py
+cd magento2.windmaker.net && python3 test.py
 /usr/lib/python3/dist-packages/selenium/webdriver/chrome/webdriver.py:50: DeprecationWarning: use options instead of chrome_options
   warnings.warn('use options instead of chrome_options', DeprecationWarning)
 .
