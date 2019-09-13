@@ -23,25 +23,8 @@ class Example(unittest.TestCase):
         if not os.path.exists(self.img_folder):
             os.mkdir(self.img_folder)
 
-#        self.driver = webdriver.Remote(
-#            command_executor='http://localhost:4444/wd/hub',
-#            desired_capabilities = {
-#                'browserName': 'chrome',
-#                'cssSelectorsEnabled': True,
-#                'javascriptEnabled': True,
-#                'databaseEnabled': True,
-#                'locationContextEnabled': True,
-#                'applicationCacheEnabled': True,
-#                'browserConnectionEnabled': True,
-#                'webStorageEnabled': True,
-#                }
-#        )
-
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
-
-        #self.driver.set_window_size(1920, 1080)
-        #self.driver.get('https://magento2.windmaker.net/')
 
         self.driver =webdriver.Chrome( chrome_options=options)
         self.driver.get('https://magento2.windmaker.net/')
@@ -58,14 +41,13 @@ class Example(unittest.TestCase):
 
     def test_something(self):
 
-
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "ui-id-4")))
+        WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID, "ui-id-4")))
 
         menu_bar_women_button=self.driver.find_element_by_id("ui-id-4")
         ActionChains(self.driver).move_to_element(menu_bar_women_button).perform()
         menu_bar_women_button.click()
 
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "info")))
+        WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "info")))
 
         self.take_snapshot()
 
@@ -79,11 +61,11 @@ class Example(unittest.TestCase):
 
         items_to_shop[0].click() #product-addtocart-button
 
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "product_addtocart_form")))
+        WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID, "product_addtocart_form")))
 
         self.take_snapshot()
 
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "product-options-bottom")))
+        WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "product-options-bottom")))
 
         self.take_snapshot()
 
@@ -98,16 +80,16 @@ class Example(unittest.TestCase):
 
         self.driver.find_element_by_id("product-addtocart-button").click()
 
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 30).until(
         EC.text_to_be_present_in_element((By.CLASS_NAME, "messages"), "You added Deirdre Relaxed-Fit Capri to your shopping cart."))
 
         self.take_snapshot()
 
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "counter-number")))
+        WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "counter-number")))
 
         self.driver.find_element_by_class_name("counter-number").click()
 
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "top-cart-btn-checkout")))
+        WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID, "top-cart-btn-checkout")))
 
         self.take_snapshot()
 
@@ -116,6 +98,8 @@ class Example(unittest.TestCase):
         self.driver.find_element_by_id("checkout-loader").click()
 
         self.take_snapshot()
+
+        # Checkout
 
         WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "step-title")))
         email = WebDriverWait(self.driver, 30).until(EC.visibility_of_element_located((By.ID, "customer-email")))
@@ -182,19 +166,26 @@ class Example(unittest.TestCase):
 
         self.take_snapshot()
 
-        #action = ActionChains(self.driver)
-        #action.move_to_element(nextStepButton)
-        #action.click()
-        #action.perform()
 
         nextStepButton.click()
 
         self.take_snapshot()
-        self.driver.execute_script("window.scrollTo(0, 0)")
-        #time.sleep(5)
+        #self.driver.execute_script("window.scrollTo(0, 0)")
+        time.sleep(10)
+        nextStepButton.click()
+
         self.take_snapshot()
-        checkout = WebDriverWait(self.driver, 70).until(EC.visibility_of_element_located((By.XPATH, "//button[@type='submit']")))
-        checkout.click()
+        self.driver.execute_script("window.scrollTo(0, 0)")
+
+        time.sleep(5)
+        placeOrder = self.driver.find_element_by_xpath('//*[@title="Place Order"]')
+
+        self.take_snapshot()
+
+        action = ActionChains(self.driver)
+        action.move_to_element(placeOrder)
+        action.click()
+        action.perform()
 
         self.take_snapshot()
 
