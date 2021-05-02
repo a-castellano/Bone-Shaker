@@ -1,0 +1,7 @@
+[telegram]
+
+bot_token = "token"
+users_to_notify = [
+  'user1_id',
+  'user2_id'
+]
