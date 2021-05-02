@@ -93,6 +93,7 @@ class Moniotor():
         if price!="No disponible.":
             picture=self.take_snapshot()
             self.notify(msg="PS5 seems to be available in Amazon ES.", image=picture)
+            self.notify(msg="https://www.amazon.es/Playstation-Consola-PlayStation-5/dp/B08KKJ37F7/")
 
         self.tearDown()
 
