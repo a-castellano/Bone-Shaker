@@ -60,10 +60,16 @@ class Moniotor():
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
 
-        self.driver =webdriver.Chrome( options=options)
+        self.driver = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            desired_capabilities={
+                'browserName': 'firefox',
+                'javascriptEnabled': True
+            }
+        )
+
         self.driver.get(url)
 
-        self.driver.set_window_size(1920, 1080)
 
     def take_snapshot(self):
 
@@ -85,6 +91,7 @@ class Moniotor():
         price=self.driver.find_element_by_class_name("a-color-price").text
 
         if price!="No disponible.":
+            picture=self.take_snapshot()
             self.notify(msg="PS5 seems to be available in Amazon ES.", image=picture)
 
         self.tearDown()
@@ -107,8 +114,6 @@ class Moniotor():
         self.setUp('https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p')
         time.sleep(5)
 
-        picture=self.take_snapshot()
-        self.notify(msg="das", image=picture)
         WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[@class='add-to-cart-button']")))
 
         price=self.driver.find_element_by_class_name("add-to-cart-button").text
