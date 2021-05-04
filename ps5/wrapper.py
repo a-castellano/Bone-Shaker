@@ -60,6 +60,11 @@ class Moniotor():
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
 
+        # Bypass Cloudflare
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        options.add_argument("--disable-blink-features=AutomationControlled")
+
         self.driver = webdriver.Remote(
             command_executor='http://localhost:4444/wd/hub',
             desired_capabilities={
@@ -81,8 +86,6 @@ class Moniotor():
         return picture
 
     def check_availability(self):
-
-        # Amazon ES
 
         self.setUp('https://www.amazon.es/Playstation-Consola-PlayStation-5/dp/B08KKJ37F7/')
         time.sleep(5)
@@ -123,6 +126,36 @@ class Moniotor():
             picture=self.take_snapshot()
             self.notify(msg="PS5 seems to be available in www.carrefour.es.", image=picture)
             self.notify(msg="https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p")
+
+        self.tearDown()
+
+        self.setUp('https://www.pccomponentes.com/sony-playstation-5')
+        time.sleep(5)
+
+        WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[@class='priceBlock']")))
+
+        price=self.driver.find_element_by_class_name("priceBlock").text
+        if price!="No disponible":
+            picture=self.take_snapshot()
+            self.notify(msg="PS5 seems to be available in PC Componentes", image=picture)
+            self.notify(msg="https://www.pccomponentes.com/sony-playstation-5")
+
+
+        self.tearDown()
+
+
+
+        self.setUp('https://www.fnac.es/Consola-PlayStation-5-Videoconsola-Consola/a7724798')
+        time.sleep(5)
+
+        WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[@class='f-buyBox-infos']")))
+
+        price=self.driver.find_element_by_class_name("f-buyBox-infos").text
+        if price!="Artículo no disponible en web":
+            picture=self.take_snapshot()
+            self.notify(msg="PS5 seems to be available in FNAC", image=picture)
+            self.notify(msg="https://www.pccomponentes.com/sony-playstation-5")
+
 
         self.tearDown()
 
