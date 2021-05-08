@@ -5,3 +5,37 @@ users_to_notify = [
   'user1_id',
   'user2_id'
 ]
+
+
+[sites]
+
+  [sites.amazon]
+  name = "Amazon"
+  url = "https://www.amazon.es/Playstation-Consola-PlayStation-5/dp/B08KKJ37F7/"
+  nameof_element_to_find = "a-color-price a-text-bold"
+  not_available_text = "No disponible."
+
+  [sites.game]
+  name = "Game"
+  url = "https://www.game.es/HARDWARE/CONSOLA/PLAYSTATION-5/CONSOLA-PLAYSTATION-5/183224"
+  nameof_element_to_find = "buy--type"
+  not_available_text = "PRODUCTO NO DISPONIBLE"
+
+  [sites.carrefour]
+  name = "Carrefour"
+  url = "https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p"
+  nameof_element_to_find = "add-to-cart-button"
+  not_available_text = "Agotado temporalmente"
+
+  [sites.pccomponentes]
+  name = "PcComponentes"
+  url = "https://www.pccomponentes.com/sony-playstation-5"
+  nameof_element_to_find = "priceBlock"
+  not_available_text = "No disponible"
+
+  [sites.Fnac]
+  name = "FNAC"
+  url = "https://www.fnac.es/Consola-PlayStation-5-Videoconsola-Consola/a7724798"
+  nameof_element_to_find = "f-buyBox-infos"
+  not_available_text = "Artículo no disponible en web"
+

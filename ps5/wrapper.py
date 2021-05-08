@@ -4,6 +4,7 @@ import datetime
 import time
 import toml
 import telegram
+import getopt
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -164,8 +165,50 @@ class Moniotor():
 
         self.driver.quit()
 
+def usage():
+
+    usage_text=""
+    usage_text+="Wrapper options:\n"
+    usage_text+="\n"
+    usage_text+="-h --help               Displays this message.\n"
+    usage_text+="--config=CONFIG_FILE    Specifies where config file is placed (required).\n"
+    usage_text+="--list-sites            List available sites readed from config file.\n"
+    usage_text+="--site=SITE_NAME        Launch wrapper on specified site.\n"
+    usage_text+="--debug                 Sends debug screeshots.\n"
+    print(usage_text)
 
 if __name__ == "__main__":
+
+    config_file = ""
+    site = ""
+    list_sites=False
+    debug=False
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "list-sites", "site=" ,"debug", "config="])
+    except getopt.GetoptError as err:
+        # print help information and exit:
+        print(err,file=sys.stderr)  # will print something like "option -a not recognized"
+        usage()
+        sys.exit(2)
+
+    for option_name, option_value in opts:
+        if option_name in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif option_name == "--config":
+            config_file=option_value
+        elif option_name == "--site":
+            site = option_value
+        elif option_name == "--debug":
+            debug = True
+        elif option_name == "--list-sites":
+            list_sites=True
+
+    if config_file == "":
+
+        print("Wrapper needs a config file.",file=sys.stderr)
+        sys.exit(2)
 
     config_file_path = os.getenv('CONFIG_FILE')
     monitor = Moniotor(config_file_path)
