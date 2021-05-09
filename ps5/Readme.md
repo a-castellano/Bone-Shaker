@@ -32,5 +32,11 @@ docker run -d --link selenium-hub:hub selenium/node-firefox
 
 Run wrapper
 ```
-CONFIG_FILE=/location_of/config.toml python wrapper.py
+python wrapper.py --config=/home/azas/Projects/Bone-Shaker/ps5/config.toml --debug --site=SITE_NAME
+```
+
+Run wrapper site by site
+
+```
+bash wrap_all_sites.sh
 ```
