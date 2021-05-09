@@ -40,6 +40,11 @@ class Moniotor():
 
         return config,error
 
+    def show_sites(self):
+
+        for site in self._config['sites'].keys():
+            print(site)
+
     def notify(self,msg,image=""):
 
         for chat_id in self._config['telegram']['users_to_notify']:
@@ -76,6 +81,9 @@ class Moniotor():
 
         self.driver.get(url)
 
+    def setCookie(self,name,value):
+
+        self.driver.add_cookie({"name": name, "value": value});
 
     def take_snapshot(self):
 
@@ -86,77 +94,36 @@ class Moniotor():
         self.photo_id += 1
         return picture
 
-    def check_availability(self):
+    def check_availability(self,site,debug):
 
-        self.setUp('https://www.amazon.es/Playstation-Consola-PlayStation-5/dp/B08KKJ37F7/')
-        time.sleep(5)
-        WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[@class='a-color-price a-text-bold']")))
+        
+        site_info = self._config['sites'][site]
+        print(site_info)
+        self.setUp(site_info['url'])
+        if 'cookies' in site_info.keys():
+            for cookie_name in site_info['cookies'].keys():
+                self.setCookie(cookie_name,site_info['cookies'][cookie_name])
 
-        price=self.driver.find_element_by_class_name("a-color-price").text
-
-        if price!="No disponible.":
-            picture=self.take_snapshot()
-            self.notify(msg="PS5 seems to be available in Amazon ES.", image=picture)
-            self.notify(msg="https://www.amazon.es/Playstation-Consola-PlayStation-5/dp/B08KKJ37F7/")
-
-        self.tearDown()
-
-
-        self.setUp('https://www.game.es/HARDWARE/CONSOLA/PLAYSTATION-5/CONSOLA-PLAYSTATION-5/183224')
         time.sleep(5)
 
-        WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[@class='buy--type']")))
-
-        price=self.driver.find_element_by_class_name("buy--type").text
-
-        if price!="PRODUCTO NO DISPONIBLE":
+        if debug:
             picture=self.take_snapshot()
-            self.notify(msg="PS5 seems to be available in game.es.", image=picture)
-            self.notify(msg="https://www.game.es/HARDWARE/CONSOLA/PLAYSTATION-5/CONSOLA-PLAYSTATION-5/183224")
+            self.notify(msg="Debug - {}.".format(site_info['name']), image=picture)
 
-        self.tearDown()
+        try:
+            WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[@class='{}']".format(site_info['nameof_element_to_find']))))
 
-        self.setUp('https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p')
-        time.sleep(5)
+        except:
+            print("{} failed.".format(site_info['name']))
+            self.tearDown()
+            sys.exit(1)
 
-        WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[@class='add-to-cart-button']")))
+        price=self.driver.find_element_by_class_name(site_info['nameof_element_with_price']).text
 
-        price=self.driver.find_element_by_class_name("add-to-cart-button").text
-
-        if price!="Agotado temporalmente":
+        if price!=site_info['not_available_text']:
             picture=self.take_snapshot()
-            self.notify(msg="PS5 seems to be available in www.carrefour.es.", image=picture)
-            self.notify(msg="https://www.carrefour.es/playstation-5-825gb/VC4A-11998176/p")
-
-        self.tearDown()
-
-        self.setUp('https://www.pccomponentes.com/sony-playstation-5')
-        time.sleep(5)
-
-        WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[@class='priceBlock']")))
-
-        price=self.driver.find_element_by_class_name("priceBlock").text
-        if price!="No disponible":
-            picture=self.take_snapshot()
-            self.notify(msg="PS5 seems to be available in PC Componentes", image=picture)
-            self.notify(msg="https://www.pccomponentes.com/sony-playstation-5")
-
-
-        self.tearDown()
-
-
-
-        self.setUp('https://www.fnac.es/Consola-PlayStation-5-Videoconsola-Consola/a7724798')
-        time.sleep(5)
-
-        WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[@class='f-buyBox-infos']")))
-
-        price=self.driver.find_element_by_class_name("f-buyBox-infos").text
-        if price!="Artículo no disponible en web":
-            picture=self.take_snapshot()
-            self.notify(msg="PS5 seems to be available in FNAC", image=picture)
-            self.notify(msg="https://www.pccomponentes.com/sony-playstation-5")
-
+            self.notify(msg="PS5 seems to be available in {}.".format(site_info['name']), image=picture)
+            self.notify(msg=site_info['url'])
 
         self.tearDown()
 
@@ -210,6 +177,13 @@ if __name__ == "__main__":
         print("Wrapper needs a config file.",file=sys.stderr)
         sys.exit(2)
 
-    config_file_path = os.getenv('CONFIG_FILE')
-    monitor = Moniotor(config_file_path)
-    monitor.check_availability()
+    monitor = Moniotor(config_file)
+
+    if list_sites:
+        monitor.show_sites()
+    else:
+        if site == "":
+            print("Wrapper needs a config file.",file=sys.stderr)
+            sys.exit(2)
+        else:
+            monitor.check_availability(site,debug)
