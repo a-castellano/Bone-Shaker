@@ -98,7 +98,6 @@ class Moniotor():
 
         
         site_info = self._config['sites'][site]
-        print(site_info)
         self.setUp(site_info['url'])
         if 'cookies' in site_info.keys():
             for cookie_name in site_info['cookies'].keys():
@@ -114,7 +113,7 @@ class Moniotor():
             WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, "//*[@class='{}']".format(site_info['nameof_element_to_find']))))
 
         except:
-            print("{} failed.".format(site_info['name']))
+            print("{} failed.".format(site_info['name']),file=sys.stderr)
             self.tearDown()
             sys.exit(1)
 
